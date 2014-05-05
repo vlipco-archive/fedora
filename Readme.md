@@ -16,7 +16,11 @@ packer build fedora20.json
 
 The resulting box will be put in `boxes/vlipco/fedora20.box`. Only Virtualbox is supported at the moment, but adding other providers is trivial thanks to the Bento project wide coverage.
 
-To test the resulting image, you must first add it to vagrant. From the root of the repo, you can do `vagrant box add --name vlipco/fedora20 boxes/vlipco/fedora20.box`. You can then go to any folder and do `vagrant init vlipco/fedora20` to create a starting Vagrantfile. To start the machine do `vagrant up` then `vagrant ssh`
+To try the resulting image:
 
-Beware that this imports the image only if it's not present already, hence if you build the image again and want to see the changes, first delete the image in Vagrant with `vagrant box remove vlipco/fedora20` 
+- From the root of the repo, add it to vagrant with `vagrant box add --name vlipco/fedora20 boxes/vlipco/fedora20.box`
+- You can then go to any folder and do `vagrant init vlipco/fedora20` to create a starting Vagrantfile. 
+- To start the machine do `vagrant up`
+- Then get into it with `vagrant ssh`
 
+Note. Remember to reimport the box to vagrant everytime you do a fresh build with any changes. For this you can run `vagrant box remove vlipco/fedora20` It's annoying and should be soon fixed once this box is published to Vagrant Cloud.
