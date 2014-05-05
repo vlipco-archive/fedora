@@ -1,0 +1,33 @@
+- name: install Yadr dependencies
+  yum: pkg={{item}} state=installed
+  with_items:
+    - zsh
+    - ruby
+    - rubygem-rake
+    - rubygem-bundler
+
+- name: Syncing Vlipco's fork of Yadr
+  git:
+    repo: git://github.com/Vlipco/dotfiles.git
+    dest: /opt/vendor/yadr.git
+    bare: yes
+    version: vlipco # tag to use
+
+- name: Cloning Yadr in users homes
+  with_items: target_users
+  git:
+    repo: /opt/vendor/yadr.git
+    dest: "~{{item}}/.yadr"
+    version: vlipco # tag to use
+
+- name: Installing Yadr for target users
+  shell: "/usr/bin/zsh -l -c 'cd ~{{item}}/.yadr && HOME=~{{item}} rake install'"
+  with_items: target_users
+
+- name: Changing ownership of all files in users home
+  with_items: target_users
+  command: "/usr/bin/zsh -l -c 'cd ~{{item}} && chown {{item}} -R $(ls -A)'"
+
+- name: Make zsh default shell for users
+  command: /usr/bin/env chsh -s /bin/zsh {{item}}
+  with_items: target_users

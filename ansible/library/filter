@@ -1,0 +1,33 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+def main():
+    module = AnsibleModule(
+        argument_spec = dict(
+            items = dict(required=True, type='list'),
+            test = dict(required=True, type='str'),
+            fact = dict(required=True, type='str')
+        )
+    )
+
+    items = module.params['items']
+    test = module.params['test']
+    fact_name = module.params['fact']
+
+    result = []
+
+    # We aply the test to each element in the items
+    for val in items:
+        cmd = test.replace("__item__", val)
+        if call(cmd, shell=True) == 0:
+            result.append(val)
+
+    facts = { fact_name: result }
+    
+    module.exit_json(changed=False, ansible_facts=facts)
+
+from ansible.module_utils.basic import *
+from subprocess import call
+from string import replace
+
+main()

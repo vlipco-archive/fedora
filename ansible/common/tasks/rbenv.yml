@@ -1,0 +1,71 @@
+- name: Install rbenv in opt
+  git: 
+    repo: git://github.com/sstephenson/rbenv.git 
+    dest: /opt/vendor/rbenv
+
+- name: Create rbenv group
+  group: name=rbenv state=present
+
+- name: Creates plugin directory
+  file: path=/opt/vendor/rbenv/plugins/ state=directory
+
+- name: Install ruby-build
+  git: 
+    repo: git://github.com/sstephenson/ruby-build.git 
+    dest: /opt/vendor/rbenv/plugins/ruby-build
+
+- name: create rbenv extra directories
+  file: path={{item}} state=directory
+  with_items:
+    - /opt/vendor/rbenv/versions
+    - /opt/vendor/rbenv/shims
+
+- name: Set rbenv folder permissions
+  file: 
+    path: /opt/vendor/rbenv 
+    recurse: true 
+    state: directory 
+    group: rbenv 
+    mode: 0050
+
+- name: Putting users in rbenv group
+  user: name={{item}} groups=rbenv append=yes
+  with_items: target_users
+
+- name: Copy rbenv_boot script to /opt/bin
+  copy: src=bin/rbenv_boot.sh dest=/opt/bin/rbenv_boot mode=0755
+
+- name: Ensure rbenv_boot is sourced in /etc/zshenv
+  lineinfile: 
+    create: yes 
+    state: present
+    dest: /etc/zshenv
+    line: "source /opt/bin/rbenv_boot"
+
+- name: Check installed ruby versions
+  command: zsh -l -c "rbenv versions"
+  register: ruby_versions
+
+- name: Checking for 2.1.1
+  assert: { that: "'2.1.1' in ruby_versions.stdout" }
+  register: check_result
+  ignore_errors: True
+
+- name: Installing ruby 2.1.1
+  shell: zsh -l -c "rbenv install 2.1.1"
+  when: check_result|failed
+
+- name: Makin ruby 2.1.1 the default version
+  shell: zsh -l -c "rbenv global 2.1.1"
+  when: "'* 2.1.1' not in ruby_versions.stdout"
+
+- name: Copying default gemrc
+  copy: src=conf/gemrc dest=/etc/gemrc
+
+- name: Install util gems
+  shell: "/usr/bin/zsh -l -c 'gem install {{item}}'"
+  with_items:
+    - rb-readline
+    - pry
+    - awesome_print
+    - bundler

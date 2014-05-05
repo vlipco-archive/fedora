@@ -1,0 +1,52 @@
+- name: Checking installed Vim version (if any)
+  shell: /usr/local/bin/vim --version
+  register: vim_version
+  ignore_errors: True
+
+- name: Matching Vim existing vs. desired version
+  assert: { that: "'Compiled by Vlipco' in vim_version.stdout" }
+  register: already_installed_check
+  ignore_errors: True
+
+- name: install vim dependencies
+  when: already_installed_check|failed
+  yum: pkg={{item}} state=installed
+  with_items:
+    - libXt-devel
+    - libX11-devel
+    - gcc-c++
+    - ncurses-devel
+    - python3-devel
+    - luajit-devel
+    - lua
+    - luabind-devel
+    - lua-devel
+    - ruby-devel
+
+- name: Syncing Vim source
+  when: already_installed_check|failed
+  git:
+    repo: git://github.com/b4winckler/vim.git
+    dest: /usr/src/vim-src
+    version: v7-4-244 # tag to use
+
+- name: Configuring vim source
+  when: already_installed_check|failed
+  shell: "cd /usr/src/vim-src && make distclean && ./configure --prefix=/usr/local --with-features=huge --enable-rubyinterp --enable-pythoninterp --enable-luainterp --enable-cscope --with-compiledby='Vlipco'"
+
+- name: Compiling vim with Lua
+  shell: >
+    cd /usr/src/vim-src && make
+  when: already_installed_check|failed
+
+- name: Installing compiled vim
+  when: already_installed_check|failed
+  shell: >
+    cd /usr/src/vim-src && make install
+
+- name: Checking version of installed Vim
+  shell: /usr/local/bin/vim --version
+  register: vim_version2
+
+- name: Checking installed Vim has Lua support
+  assert: { that: "'+lua' in vim_version2.stdout" }

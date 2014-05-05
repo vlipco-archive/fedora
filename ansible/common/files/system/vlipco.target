@@ -1,0 +1,6 @@
+[Unit]
+Description=Vlipco Managed Services
+After=cloud-config.target cloud-final.service cloud-init.service cloud-init-local.service cloud-config.service
+
+[Install]
+WantedBy=multi-user.target

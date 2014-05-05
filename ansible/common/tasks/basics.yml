@@ -1,0 +1,64 @@
+- name: install basic packages
+  yum: pkg={{item}} state=installed
+  with_items:
+    - gcc
+    - make
+    - git
+    - wget
+    - curl
+    - nc
+    - unzip
+    - tcpdump
+    - openssl-devel
+    - gcc-c++
+    - golang
+    - docker-io
+    - mosh
+    - tmux
+    - telnet
+    - zsh
+    - unzip
+    - python-pip
+    - rpm-build
+
+- name: Starting docker and enabling it on boot
+  service: name=docker enabled=yes state=started
+
+- name: "Create Ansible managed directories"
+  file: path={{ item }} state=directory
+  with_items:
+     - /opt
+     - /opt/bin
+     - /opt/conf
+     - /opt/rc.local
+
+- name: "Create manually managed directories under /srv"
+  file: path={{ item }} state=directory
+  with_items:
+    - /srv
+    - /srv/bin
+    - /srv/conf
+    - /srv/rc.local
+    - /srv/system
+
+- name: Installing Vlipco's motd
+  copy: src=conf/motd dest=/etc/motd
+  tags: motd
+
+- name: Creating sshd.service configuration folder
+  file: state=directory path=/etc/systemd/system/sshd.service.d
+
+- name: Installing sshd post stop command in /etc/systemd/system/sshd.service.d
+  copy: src=conf/sshd-stop.conf dest=/etc/systemd/system/sshd.service.d/stop.conf
+
+- name: Installg profile.d path-additions
+  copy: src=bin/path-additions.sh dest=/etc/profile.d/path-additions.sh mode=0755
+
+- name: Installing jq (JSON CLI tool)
+  copy: src=bin/json-query.linux64 dest=/opt/bin/jq force=yes mode=0755
+
+- name: Creating vlipco.target for systemd
+  copy: src=system/vlipco.target dest=/etc/systemd/system/vlipco.target
+
+- name: Enabling vlipco.target on boot
+  service: name=vlipco.target enabled=yes state=started

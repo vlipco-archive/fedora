@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+url="https://vagrantcloud.com/chef/fedora-20/version/1/provider/virtualbox.box"
+
+img_path="boxes/chef/fedora20.box"
+target_path="boxes/chef/fedora20"
+
+echo "Saving image to $img_path"
+wget -O $img_path $url
+
+mkdir -p $target_path
+
+echo "Extracting box contents to $target_path"
+tar -xzf $img_path -C $target_path
+
+echo "Done."

@@ -1,0 +1,11 @@
+- name: Creating rc.local script
+  copy: src=bin/rc-local.sh dest=/etc/rc.d/rc.local mode=0755
+
+- name: Copying rc-local.service definition
+  copy: src=system/rc-local.service dest=/etc/systemd/system/rc-local.service
+
+- name: Enabling rc-local service unit
+  command: /usr/bin/systemctl enable /etc/systemd/system/rc-local.service
+
+- name: Starting rc-local service
+  service: name=rc-local state=started
