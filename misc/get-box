@@ -3,8 +3,8 @@ set -euo pipefail
 
 url="https://vagrantcloud.com/chef/fedora-20/version/1/provider/virtualbox.box"
 
-img_path="boxes/chef/fedora20.box"
-target_path="boxes/chef/fedora20"
+img_path="boxes/chef/fedora-20.box"
+target_path="boxes/chef/fedora-20"
 
 echo "Saving image to $img_path"
 wget -O $img_path $url
