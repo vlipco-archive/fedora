@@ -4,6 +4,7 @@
     - gcc
     - make
     - git
+    - mercurial
     - wget
     - curl
     - nc
@@ -12,36 +13,22 @@
     - openssl-devel
     - gcc-c++
     - golang
-    - docker-io
-    - mosh
     - tmux
-    - telnet
     - zsh
     - unzip
     - python-pip
     - rpm-build
 
-- name: Starting docker and enabling it on boot
-  service: name=docker enabled=yes state=started
+#- name: Starting docker and enabling it on boot
+#  service: name=docker enabled=yes state=started
 
-- name: "Create Ansible managed directories"
+- name: "Create extra convention dirs"
   file: path={{ item }} state=directory
   with_items:
-     - /opt
-     - /opt/bin
-     - /opt/conf
-     - /opt/rc.local
+     - /usr/local/rc
+     - /srv
 
-- name: "Create manually managed directories under /srv"
-  file: path={{ item }} state=directory
-  with_items:
-    - /srv
-    - /srv/bin
-    - /srv/conf
-    - /srv/rc.local
-    - /srv/system
-
-- name: Installing Vlipco's motd
+- name: Installing motd
   copy: src=conf/motd dest=/etc/motd
   tags: motd
 
@@ -55,10 +42,28 @@
   copy: src=bin/path-additions.sh dest=/etc/profile.d/path-additions.sh mode=0755
 
 - name: Installing jq (JSON CLI tool)
-  copy: src=bin/json-query.linux64 dest=/opt/bin/jq force=yes mode=0755
+  copy: src=bin/json-query.linux64 dest=/usr/local/bin/jq force=yes mode=0755
 
 - name: Creating vlipco.target for systemd
   copy: src=system/vlipco.target dest=/etc/systemd/system/vlipco.target
 
 - name: Enabling vlipco.target on boot
   service: name=vlipco.target enabled=yes state=started
+
+- name: Finding local user to be managed
+  filter: 
+    items: "{{managed_users}}"
+    test: "id __item__ &> /dev/null"
+    fact: target_users
+
+- name: Creating rc.local script
+  copy: src=bin/rc-local.sh dest=/etc/rc.d/rc.local mode=0755
+
+- name: Copying rc-local.service definition
+  copy: src=system/rc-local.service dest=/etc/systemd/system/rc-local.service
+
+- name: Enabling rc-local service unit
+  command: /usr/bin/systemctl enable /etc/systemd/system/rc-local.service
+
+- name: Starting rc-local service
+  service: name=rc-local state=started

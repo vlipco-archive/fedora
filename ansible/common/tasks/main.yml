@@ -1,7 +1,5 @@
 ---
-- include: users.yml tags=users
 - include: basics.yml tags=basics
-- include: rc-local.yml tags=rc-local
-- include: vim+lua.yml tags=vim
+- include: ruby.yml tags=ruby
+- include: vim.yml tags=vim
 - include: yadr.yml tags=yadr
-- include: rbenv.yml tags=rbenv

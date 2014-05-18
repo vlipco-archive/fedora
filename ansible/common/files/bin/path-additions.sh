@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-export PATH="bin:/srv/bin:/opt/bin:$PATH"
+export PATH="bin:/srv/bin:/usr/local/bin:$PATH"

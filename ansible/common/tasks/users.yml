@@ -1,8 +1,0 @@
-- name: Ensure powerless user exists
-  user: name=powerless state=present
-
-- name: Finding local user to be managed
-  filter: 
-    items: "{{managed_users}}"
-    test: "id __item__ &> /dev/null"
-    fact: target_users

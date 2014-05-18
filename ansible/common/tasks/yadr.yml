@@ -1,33 +1,23 @@
-- name: install Yadr dependencies
-  yum: pkg={{item}} state=installed
-  with_items:
-    - zsh
-    - ruby
-    - rubygem-rake
-    - rubygem-bundler
-
-- name: Syncing Vlipco's fork of Yadr
-  git:
-    repo: git://github.com/Vlipco/dotfiles.git
-    dest: /opt/vendor/yadr.git
-    bare: yes
-    version: vlipco # tag to use
-
 - name: Cloning Yadr in users homes
   with_items: target_users
   git:
-    repo: /opt/vendor/yadr.git
+    depth: 1
+    repo: git://github.com/davidpelaez/yadr.git
     dest: "~{{item}}/.yadr"
-    version: vlipco # tag to use
+    version: minimal
 
 - name: Installing Yadr for target users
-  shell: "/usr/bin/zsh -l -c 'cd ~{{item}}/.yadr && HOME=~{{item}} rake install'"
+  shell: "cd ~{{item}}/.yadr && HOME=~{{item}} bash -l -c '/usr/local/bin/rake install'"
   with_items: target_users
+
+- name: Installing vundle...be patient
+  with_items: target_users
+  shell: 'cd ~{{item}}/.yadr && HOME=~{{item}} /usr/local/bin/vim --noplugin -u vim/vundles.vim -N "+set hidden" "+syntax on" +BundleClean! +BundleInstall +qall'
 
 - name: Changing ownership of all files in users home
   with_items: target_users
   command: "/usr/bin/zsh -l -c 'cd ~{{item}} && chown {{item}} -R $(ls -A)'"
 
-- name: Make zsh default shell for users
+- name: Making zsh default shell for users
   command: /usr/bin/env chsh -s /bin/zsh {{item}}
   with_items: target_users

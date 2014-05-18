@@ -3,7 +3,7 @@
   register: vim_version
   ignore_errors: True
 
-- name: Matching Vim existing vs. desired version
+- name: Matching existing vim vs. desired version
   assert: { that: "'Compiled by Vlipco' in vim_version.stdout" }
   register: already_installed_check
   ignore_errors: True
