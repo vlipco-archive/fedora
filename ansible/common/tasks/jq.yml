@@ -1,0 +1,29 @@
+- name: install jq dev dependencies
+  yum: pkg={{item}} state=installed
+  with_items:
+    - bison
+    - libtool
+    - flex
+
+- name: Downloading jq source code
+  git:
+    repo: https://github.com/stedolan/jq.git
+    version: 854ff56
+    dest: "/usr/local/src/jq"
+    depth: 1
+
+- name: Compiling and installing jq from source
+  shell: >
+    /usr/bin/bash -l -c "cd /usr/local/src/jq && autoreconf -i &&
+    ./configure && make && make install"
+
+- name: Checking installed version
+  shell: /usr/bin/bash -l -c "jq --version"
+  register: jq_version
+
+- name: Veryfing version
+  assert:
+    that: "'854ff56' in jq_version.stdout"
+
+- name: Cleaning source code
+  file: path=/usr/local/src/jq state=absent

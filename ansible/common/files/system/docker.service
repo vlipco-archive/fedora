@@ -1,0 +1,9 @@
+[Unit]
+Description=Docker
+
+[Service]
+ExecStart=/usr/local/bin/docker -d -r=false --selinux-enabled
+
+[Install]
+WantedBy=multi-user.target
+Wants=network.target
