@@ -1,6 +1,6 @@
 [Unit]
 Description=Rc.local Script Executor (/etc/rc.d/rc.local)
-Required=vlipco.target
+Requires=vlipco.target
 
 [Service]
 Type=oneshot

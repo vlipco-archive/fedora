@@ -6,12 +6,20 @@ url="https://vagrantcloud.com/chef/fedora-20/version/1/provider/virtualbox.box"
 img_path="boxes/chef/fedora-20.box"
 target_path="boxes/chef/fedora-20"
 
-echo "Saving image to $img_path"
-wget -O $img_path $url
+if [ ! -e "$target_path" ]; then
+	
+	mkdir -p $target_path
 
-mkdir -p $target_path
+	echo "Saving image to $img_path"
+	wget -O $img_path $url
 
-echo "Extracting box contents to $target_path"
-tar -xzf $img_path -C $target_path
 
-echo "Done."
+	echo "Extracting box contents to $target_path"
+	tar -xzf $img_path -C $target_path
+
+	echo "Done."
+else
+	echo "Box image already present in $target_path"
+fi
+
+echo

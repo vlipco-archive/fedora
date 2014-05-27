@@ -8,13 +8,16 @@ function log() {
 log "Shell provisioner will run in 15s"
 sleep 15
 
-#log "Updating all packages" && true || yum update -y
+log "Upgrading all packages"
+sudo yum upgrade -y
+
 log "Installing ansible"
 sudo yum install -y ansible
 
 cd /tmp/ansible
 
 log "Running ansible playbook"
+# ansible will make the sudo on it's own
 ansible-playbook -i localhost_inventory common.yml --connection=local
 
 log "Removing /tmp/ansible"

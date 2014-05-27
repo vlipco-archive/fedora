@@ -27,7 +27,7 @@
     dest: "{{src_dir}}/{{rbi}}.tar.gz"
     url: "https://github.com/postmodern/ruby-install/archive/v0.4.3.tar.gz"
 
-- command: "tar -xzf {{rbi}}.tar.gz chdir={{src_dir}} creates={{rbi_dir}}"
+- command: "tar xf {{rbi}}.tar.gz chdir={{src_dir}} creates={{rbi_dir}}"
 
 - command: "make install chdir={{rbi_dir}} creates=/usr/local/bin/ruby-install"
 
@@ -39,3 +39,9 @@
 
 - name: Install bundler
   shell: "/usr/local/bin/gem install bundler"
+
+- name: Cleaning temp files
+  shell: "rm -rf {{src_dir}}/{{item}}*"
+  with_items:
+    - "{{rbi}}"
+    - "ruby-{{rb_version}}"
