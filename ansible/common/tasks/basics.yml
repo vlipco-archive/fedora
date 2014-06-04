@@ -21,6 +21,7 @@
     - bind-utils
     - tree
     - nano
+    - rsync
 
 - name: Install latest docker from binary
   get_url:

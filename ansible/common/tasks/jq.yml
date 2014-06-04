@@ -8,7 +8,7 @@
 - name: Downloading jq source code
   git:
     repo: https://github.com/stedolan/jq.git
-    version: 854ff56
+    version: 5fb82d1018681f41230a3ff6dc412ddad511e821
     dest: "/usr/local/src/jq"
     depth: 1
 
@@ -23,7 +23,7 @@
 
 - name: Veryfing version
   assert:
-    that: "'854ff56' in jq_version.stdout"
+    that: "'5fb82d' in jq_version.stdout"
 
 - name: Cleaning source code
   file: path=/usr/local/src/jq state=absent

@@ -11,7 +11,7 @@ To build the image run:
 
 ```
 misc/get-box
-packer build --only=virtualbox fedora-20.json
+packer build fedora-20.json
 ```
 
 The resulting box will be put in `boxes/vlipco/fedora-20.box`. Only Virtualbox is supported at the moment, but adding other providers is trivial thanks to the Bento project wide coverage.
