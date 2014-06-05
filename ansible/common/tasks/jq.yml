@@ -10,7 +10,6 @@
     repo: https://github.com/stedolan/jq.git
     version: 5fb82d1018681f41230a3ff6dc412ddad511e821
     dest: "/usr/local/src/jq"
-    depth: 1
 
 - name: Compiling and installing jq from source
   shell: >

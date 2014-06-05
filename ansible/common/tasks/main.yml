@@ -1,6 +1,6 @@
 ---
-- include: basics.yml tags=basics
-- include: jq.yml tags=basics
-- include: ruby.yml tags=ruby
-- include: vim.yml tags=vim
-- include: yadr.yml tags=yadr
+- include: "basics.yml tags=basics"
+- include: "jq.yml tags=basics,jq"
+- include: "ruby.yml tags=ruby"
+- include: "vim.yml tags=vim"
+- include: "yadr.yml tags=yadr"

@@ -22,28 +22,33 @@
     - tree
     - nano
     - rsync
+    - docker-io
 
-- name: Install latest docker from binary
-  get_url:
-    url: "https://get.docker.io/builds/Linux/x86_64/docker-latest"
-    dest: /usr/local/bin/docker
-    mode: 0755
-
-- name: Linking docker to /usr/bin
-  file:
-    state: link
-    src: /usr/local/bin/docker
-    dest: /usr/bin/docker
-    mode: 0755
+#- name: Install latest docker from binary
+#  get_url:
+#    url: "https://get.docker.io/builds/Linux/x86_64/docker-latest"
+#    dest: /usr/local/bin/docker
+#    mode: 0755
+#
+#- name: Linking docker to /usr/bin
+#  file:
+#    state: link
+#    src: /usr/local/bin/docker
+#    dest: /usr/bin/docker
+#    mode: 0755
+#
 
 - name: Copy docker unit
   copy: src=system/docker.service dest=/etc/systemd/system/docker.service
 
 - name: Enable docker on boot
-  service: name=docker.service enabled=yes state=started
+  command: systemctl enable docker.service -f
+
+- name: Starting docker
+  command: systemctl start docker.service
 
 - name: Pulling vlipco/hull into docker
-  command: /usr/local/bin/docker pull vlipco/hull
+  command: docker pull vlipco/hull
 
 - name: "Create extra convention dirs"
   file: path={{ item }} state=directory
