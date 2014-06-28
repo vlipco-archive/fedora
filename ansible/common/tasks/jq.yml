@@ -4,13 +4,13 @@
     - bison
     - libtool
     - flex
+    - oniguruma-devel
 
 - name: Downloading jq source code
   git:
     repo: https://github.com/stedolan/jq.git
-    version: 854ff56
+    version: 3e1baf5
     dest: "/usr/local/src/jq"
-    depth: 1
 
 - name: Compiling and installing jq from source
   shell: >
@@ -23,7 +23,7 @@
 
 - name: Veryfing version
   assert:
-    that: "'854ff56' in jq_version.stdout"
+    that: "'3e1baf5' in jq_version.stdout"
 
 - name: Cleaning source code
   file: path=/usr/local/src/jq state=absent

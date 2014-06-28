@@ -1,5 +1,5 @@
 [Unit]
-Description=Vlipco Managed Services
+Description=Server Services
 After=cloud-config.target cloud-final.service cloud-init.service cloud-init-local.service cloud-config.service docker.service
 
 [Install]

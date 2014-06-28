@@ -3,8 +3,8 @@ Description=Docker
 Wants=network.target
 
 [Service]
-ExecStart=/usr/local/bin/docker -d -r=false --selinux-enabled
+ExecStart=/usr/bin/docker -d --selinux-enabled
 Restart=always
 
 [Install]
-WantedBy=multi-user.target
+RequiredBy=multi-user.target

@@ -1,10 +1,9 @@
 [Unit]
-Description=Rc.local Script Executor (/etc/rc.d/rc.local)
-Requires=vlipco.target
+Description=Rc.local Script Trigger
 
 [Service]
 Type=oneshot
-ExecStart=/etc/rc.d/rc.local
+ExecStart=/usr/bin/rc-local
 
 [Install]
-WantedBy=vlipco.target
+WantedBy=server.target

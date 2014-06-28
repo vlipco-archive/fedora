@@ -1,6 +1,6 @@
 TARGET_NAME = vlipco/fedora-20
 
-virtualbox_all: clean build install
+virtualbox_all: virtualbox_clean virtualbox_build virtualbox_install
 	@echo
 	@echo "---- all ----"
 	@echo "Image ready to use in vagrant as $(TARGET_NAME)"

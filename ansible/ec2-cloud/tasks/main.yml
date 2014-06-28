@@ -1,0 +1,24 @@
+- name: Creating ifup-local script to handle multiple IPs on eth0
+  copy: src=bin/ifup-local.sh dest=/sbin/ifup-local mode=0755
+
+- name: Installing user-data query script
+  copy: src=bin/user-data.sh dest=/usr/bin/user-data mode=0755
+
+- name: Set hostname preservation
+  lineinfile: 
+    dest: /etc/cloud/cloud.cfg
+    regexp: "^preserve_hostname"
+    line: "preserve_hostname: True"
+
+- name: Creating user-data-hostname script in local rc.d
+  copy: src=bin/user-data-hostname.sh dest=/usr/local/rc.d/user-data-hostname mode=0755
+
+- name: Ensuring cloud config preserves hostname
+  lineinfile: 
+    dest: /etc/cloud/cloud.cfg 
+    line: "preserve_hostname: True"
+
+- name: Running user-data-hostname
+  command: /usr/local/rc.d/user-data-hostname
+
+# TODO set complementary users, e.g: powerless

@@ -1,0 +1,10 @@
+[Unit]
+Description=Kill sshd sessions on shutdown
+Requires=mutil-user.target
+
+[Service]
+ExecStart=/usr/sbin/killall5 -9 sshd
+Type=oneshot
+
+[Install]
+WantedBy=shutdown.target reboot.target poweroff.target

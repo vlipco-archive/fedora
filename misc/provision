@@ -18,7 +18,16 @@ cd /tmp/ansible
 
 log "Running ansible playbook"
 # ansible will make the sudo on it's own
-ansible-playbook -i localhost_inventory common.yml --connection=local
+
+if curl -s http://169.254.169.254/latest/ --max-time 1 &> /dev/null; then
+	echo "EC2 instance detected, installing with ec2-cloud role additions"
+	cloud="True"
+else
+	cloud="False"
+fi
+
+ansible-playbook -i localhost_inventory common.yml \
+  --connection=local --extra-vars "is_ec2=$cloud"
 
 log "Removing /tmp/ansible"
 rm -rf /tmp/ansible

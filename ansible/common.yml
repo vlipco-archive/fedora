@@ -2,6 +2,9 @@
 
 - hosts: all
   sudo: yes
+  vars:
+    is_ec2: False
   roles:
     - { role: common }
+    - { role: ec2-cloud, tags: ['ec2'], when: is_ec2 }
 
