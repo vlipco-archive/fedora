@@ -13,6 +13,7 @@
     - openssl-devel
     - gcc-c++
     - golang
+    - words
     - fish
     - bc
     - unzip
@@ -81,3 +82,6 @@
 
 - name: Pulling vlipco/mini into docker
   command: /usr/bin/docker pull vlipco/mini
+
+- name: Creating auto-hostname script in local rc.d
+  copy: src=bin/auto-hostname.sh dest=/usr/local/rc.d/auto-hostname mode=0755
