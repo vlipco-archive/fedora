@@ -1,3 +1,7 @@
+# digital ocean fix since they have a bug in newly booted fedora droplets
+- name: Disable rngd (if present)
+  command: "/usr/bin/systemctl disable rngd.service || true"
+
 - name: install basic packages
   yum: pkg={{item}} state=installed
   with_items:
