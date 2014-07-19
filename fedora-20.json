@@ -1,33 +1,58 @@
 {
-    "variables": {
-        "box_name": "fedora-20"
+  "variables": {
+    "box_name": "fedora-20"
+  },
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "ansible",
+      "destination": "/tmp/ansible"
     },
-    "builders": [{
-        "type": "virtualbox-ovf",
-        "source_path": "boxes/chef/fedora-20/box.ovf",
-        "vm_name": "{{ user `box_name` }}",
-        "ssh_username": "vagrant",
-        "output_directory": ".tmp/{{ user `box_name` }}",
-        "headless": true,
-        "ssh_key_path": "misc/vagrant-insecure.pem",
-        "ssh_wait_timeout": "1m",
-        "shutdown_command": "sudo systemctl poweroff",
-        "vboxmanage": [
-            ["modifyvm", "{{.Name}}", "--memory", "4096"],
-            ["modifyvm", "{{.Name}}", "--cpus", "2"]
+    {
+      "type": "shell",
+      "script": "misc/provision"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "boxes/vlipco/{{ user `box_name` }}.box",
+      "compression_level": 9
+    }
+  ],
+  "builders": [
+    {
+      "vm_name": "{{ user `box_name` }}",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          4096
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          2
         ]
-    }],
-    "provisioners": [{
-        "type": "file",
-        "source": "ansible",
-        "destination": "/tmp/ansible"
-    }, {
-        "type": "shell",
-        "script": "misc/provision"
-    }],
-    "post-processors": [{
-        "type": "vagrant",
-        "compression_level": 9,
-        "output": "boxes/vlipco/{{ user `box_name` }}.box"
-    }]
+      ],
+      "headless": true,
+      "output_directory": ".tmp/{{ user `box_name` }}",
+      "shutdown_command": "sudo systemctl poweroff",
+      "source_path": "boxes/chef/fedora-20/box.ovf",
+      "ssh_key_path": "misc/vagrant-insecure.pem",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "1m",
+      "type": "virtualbox-ovf"
+    },
+    {
+      "type": "digitalocean",
+      "snapshot_name": "{{ user `box_name` }}-{{timestamp}}",
+      "size": "8gb",
+      "region": "nyc2",
+      "image": "fedora-20-x64",
+      "droplet_name": "{{ user `box_name` }}-{{timestamp}}"
+    }
+  ]
 }
