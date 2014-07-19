@@ -1,6 +1,6 @@
 {
   "variables": {
-    "box_name": "fedora-20"
+    "box_name": "vlipco-fedora-20"
   },
   "provisioners": [
     {
@@ -23,6 +23,13 @@
   "builders": [
     {
       "vm_name": "{{ user `box_name` }}",
+      "headless": true,
+      "output_directory": ".tmp/{{ user `box_name` }}",
+      "shutdown_command": "sudo systemctl poweroff",
+      "source_path": "boxes/chef/fedora-20/box.ovf",
+      "ssh_key_path": "misc/vagrant-insecure.pem",
+      "ssh_username": "vagrant",
+      "type": "virtualbox-ovf",
       "vboxmanage": [
         [
           "modifyvm",
@@ -36,20 +43,12 @@
           "--cpus",
           2
         ]
-      ],
-      "headless": true,
-      "output_directory": ".tmp/{{ user `box_name` }}",
-      "shutdown_command": "sudo systemctl poweroff",
-      "source_path": "boxes/chef/fedora-20/box.ovf",
-      "ssh_key_path": "misc/vagrant-insecure.pem",
-      "ssh_username": "vagrant",
-      "ssh_wait_timeout": "1m",
-      "type": "virtualbox-ovf"
+      ]
     },
     {
       "type": "digitalocean",
       "snapshot_name": "{{ user `box_name` }}-{{timestamp}}",
-      "size": "8gb",
+      "size": "512mb",
       "region": "nyc2",
       "image": "fedora-20-x64",
       "droplet_name": "{{ user `box_name` }}-{{timestamp}}"
