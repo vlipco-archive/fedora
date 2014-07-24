@@ -1,3 +1,12 @@
+- name: Installing github keys binary
+  copy: src=bin/gh-keys dest=/usr/sbin/gh-keys mode=0755
+
+- name: Installing custom SSHD config
+  copy: src=conf/sshd_config dest=/etc/ssh/sshd_config backup=yes
+
+- name: Restarting sshd to use new configuration
+  command: "/usr/bin/systemctl restart sshd"
+
 # digital ocean fix since they have a bug in newly booted fedora droplets
 - name: Disable rngd (if present)
   command: "/usr/bin/systemctl disable rngd.service || true"
