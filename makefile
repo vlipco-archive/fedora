@@ -28,4 +28,7 @@ json:
 digitalocean: json
 	packer build -only digitalocean fedora-20.json
 
+amazon: json
+	packer build -only amazon-ebs fedora-20.json
+
 .PHONY: json
