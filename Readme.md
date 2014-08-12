@@ -25,4 +25,4 @@ To try the resulting image:
 
 Note. Remember to reimport the box to vagrant everytime you do a fresh build with any changes. For this you can run `vagrant box remove vlipco/fedora-20` It's annoying and should be soon fixed once this box is published to Vagrant Cloud.
 
-INSTALL forego, hg
+set gopath & gobin

@@ -1,3 +1,6 @@
+- name: Setting SElinux policy to permissive
+  selinux: policy=targeted state=permissive
+
 - name: Installing github keys binary
   copy: src=bin/gh-keys dest=/usr/sbin/gh-keys mode=0755
 
@@ -12,7 +15,7 @@
   command: "/usr/bin/systemctl disable rngd.service || true"
 
 - name: install basic packages
-  yum: pkg={{item}} state=installed
+  yum: "pkg={{item}} state=installed"
   with_items:
     - gcc
     - make
@@ -34,8 +37,19 @@
     - bind-utils
     - tree
     - nano
-#    - python-pip
-#    - tmux
+    - libreswan
+    - ferm
+    - openvpn
+    - bzip2
+    - automake
+    - gdbm-devel
+    - libffi-devel
+    - libyaml-devel
+    - openssl-devel
+    - ncurses-devel
+    - readline-devel
+    - zlib-devel
+    - perl-Digest
 
 - name: Install latest docker from binary
   get_url:
@@ -51,6 +65,15 @@
      - /usr/local/rc.d
      - /srv/rc.d
      - /srv/bin
+
+- name: Installing JQ
+  copy: src=vendor/jq dest=/usr/bin/jq mode=0755
+
+- name: Copying Ruby RPM
+  copy: src=vendor/ruby-2.1.2-1.x86_64.rpm dest=/usr/local/src/ruby-2.1.2-1.x86_64.rpm
+
+- name: Installing Ruby
+  yum: name=/usr/local/src/ruby-2.1.2-1.x86_64.rpm state=present
 
 - name: Installing motd
   copy: src=conf/motd dest=/etc/motd

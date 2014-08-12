@@ -21,7 +21,7 @@
     - lua
     - luabind-devel
     - lua-devel
-    - ruby-devel
+    #- ruby-devel
 
 - name: Syncing Vim source
   when: already_installed_check|failed

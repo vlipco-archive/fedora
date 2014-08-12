@@ -9,7 +9,7 @@ virtualbox_build:
 	@echo
 	@echo "---- build ----"
 	misc/get-box
-	packer build fedora-20.json
+	packer build -only virtualbox-ovf fedora-20.json 
 
 virtualbox_install:
 	@echo
