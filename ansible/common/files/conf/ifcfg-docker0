@@ -1,0 +1,7 @@
+DEVICE="docker0"
+TYPE="Bridge"
+ONBOOT="yes"
+NM_CONTROLLED="yes"
+BOOTPROTO="static"
+IPADDR=172.17.42.1
+NETMASK=255.255.0.0

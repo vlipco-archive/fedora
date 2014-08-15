@@ -1,6 +1,18 @@
 - name: Setting SElinux policy to permissive
   selinux: policy=targeted state=permissive
 
+- name: Disabling/stopping firewalld
+  service: name=firewalld enabled=no state=stopped
+
+- name: Masking firewalld
+  command: "/usr/bin/systemctl mask firewalld"
+
+- name: Flushing iptables
+  command: "/usr/sbin/iptables -F"
+
+- name: Saving iptables
+  shell: "/usr/sbin/iptables-save > /etc/sysconfig/iptables creates=/etc/sysconfig/iptables"
+
 - name: Installing github keys binary
   copy: src=bin/gh-keys dest=/usr/sbin/gh-keys mode=0755
 
@@ -11,17 +23,19 @@
   command: "/usr/bin/systemctl restart sshd"
 
 # digital ocean fix since they have a bug in newly booted fedora droplets
-- name: Disable rngd (if present)
+- name: Disabling rngd (if present)
   command: "/usr/bin/systemctl disable rngd.service || true"
 
-- name: install basic packages
+- name: Installing basic packages
   yum: "pkg={{item}} state=installed"
   with_items:
     - gcc
     - make
     - git
     - mercurial
+    - dnsmasq
     - wget
+    - bridge-utils
     - curl
     - nc
     - unzip
@@ -51,16 +65,20 @@
     - zlib-devel
     - perl-Digest
 
-- name: Install latest docker from binary
+- name: Defining docker0 static bridge
+  copy: src=conf/ifcfg-docker0 dest=/etc/sysconfig/network-scripts/ifcfg-docker0 mode=0755
+
+- name: Bringing up docker0
+  command: /usr/sbin/ifup docker0
+
+- name: Installing latest docker from binary
   get_url:
     url: "https://get.docker.io/builds/Linux/x86_64/docker-latest"
     dest: /usr/bin/docker
     mode: 0755
-    force: yes
-
 
 - name: "Create extra convention dirs"
-  file: path={{ item }} state=directory
+  file: "path={{ item }} state=directory"
   with_items:
      - /usr/local/rc.d
      - /srv/rc.d
@@ -69,11 +87,33 @@
 - name: Installing JQ
   copy: src=vendor/jq dest=/usr/bin/jq mode=0755
 
+- name: Copying bash prompt
+  copy: src=conf/prompt dest=/etc/prompt
+
+- name: Copying dnsmasq configuration
+  copy: src=conf/dnsmasq.conf dest=/etc/dnsmasq.conf
+
+- name: Sourcing prompt in bashrc (global)
+  lineinfile: 
+    dest: /etc/bashrc
+    line: source /etc/prompt
+    state: present
+
+- name: Making sure rubypick is absent
+  yum: "pkg=rubypick state=absent"
+
+- name: Checking ruby version
+  register: ruby_already_installed_check
+  ignore_errors: True
+  shell: ruby -v | grep -Gq 2.1.2p95
+
 - name: Copying Ruby RPM
-  copy: src=vendor/ruby-2.1.2-1.x86_64.rpm dest=/usr/local/src/ruby-2.1.2-1.x86_64.rpm
+  copy: src=vendor/ruby2.1.2p95.x86_64.rpm dest=/usr/local/src/ruby2.1.2p95.x86_64.rpm
+  when: ruby_already_installed_check|failed
 
 - name: Installing Ruby
-  yum: name=/usr/local/src/ruby-2.1.2-1.x86_64.rpm state=present
+  yum: name=/usr/local/src/ruby2.1.2p95.x86_64.rpm state=present
+  when: ruby_already_installed_check|failed
 
 - name: Installing motd
   copy: src=conf/motd dest=/etc/motd
@@ -98,16 +138,19 @@
     - rc-local.service
     - server.target
     - sshd-shutdown.service
+    - dnsmasq.service
 
 - name: Updating systemd daemon
   command: "/usr/bin/systemctl daemon-reload"
 
 - name: Enabling units
-  command: "/usr/bin/systemctl enable /etc/systemd/system/{{item}}"
+  #command: "/usr/bin/systemctl enable /etc/systemd/system/{{item}}"
+  service: "name={{ item }} enabled=yes"
   with_items:
     - docker.service
     - server.target
     - rc-local.service
+    - dnsmasq.service
     - sshd-shutdown.service 
 
 - name: Restarting units

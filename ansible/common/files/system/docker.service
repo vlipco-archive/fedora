@@ -3,7 +3,8 @@ Description=Docker
 Wants=network.target
 
 [Service]
-ExecStart=/usr/bin/docker -d --selinux-enabled
+ExecStart=/usr/bin/docker -d --selinux-enabled -b docker0 \
+  -H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock
 Restart=always
 RestartSec=3
 

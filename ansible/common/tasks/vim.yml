@@ -10,7 +10,7 @@
 
 - name: install vim dependencies
   when: already_installed_check|failed
-  yum: pkg={{item}} state=installed
+  yum: "pkg={{item}} state=installed"
   with_items:
     - libXt-devel
     - libX11-devel
@@ -21,7 +21,6 @@
     - lua
     - luabind-devel
     - lua-devel
-    #- ruby-devel
 
 - name: Syncing Vim source
   when: already_installed_check|failed
