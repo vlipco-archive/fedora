@@ -9,7 +9,8 @@ log "Shell provisioner will run in 15s"
 sleep 15
 
 log "Upgrading all packages"
-sudo yum upgrade -y
+#sudo yum clean all 
+sudo yum update -y
 
 log "Installing ansible"
 sudo yum install -y ansible

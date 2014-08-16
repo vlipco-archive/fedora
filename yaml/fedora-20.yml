@@ -28,7 +28,7 @@ builders:
     vm_name: "{{ user `box_name` }}"
     ssh_username: vagrant
     output_directory: ".tmp/{{ user `box_name` }}"
-    headless: True
+    headless: False
     ssh_key_path: misc/vagrant-insecure.pem
     #ssh_wait_timeout: 1m
     shutdown_command: sudo systemctl poweroff
@@ -45,9 +45,11 @@ builders:
     snapshot_name: "{{ user `box_name` }}-{{timestamp}}"
 
 provisioners:
+  # copy ansible folder for local execution
   - type: file
     source: ansible
     destination: /tmp/ansible
+  # run the playbook locally
   - type: shell
     script: misc/provision
 
