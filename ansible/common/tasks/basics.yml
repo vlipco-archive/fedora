@@ -1,27 +1,3 @@
-- name: Setting SElinux policy to permissive
-  selinux: policy=targeted state=permissive
-
-- name: Disabling/stopping firewalld
-  service: name=firewalld enabled=no state=stopped
-
-- name: Masking firewalld
-  command: "/usr/bin/systemctl mask firewalld"
-
-- name: Flushing iptables
-  command: "/usr/sbin/iptables -F"
-
-- name: Saving iptables
-  shell: "/usr/sbin/iptables-save > /etc/sysconfig/iptables creates=/etc/sysconfig/iptables"
-
-- name: Installing github keys binary
-  copy: src=bin/gh-keys dest=/usr/sbin/gh-keys mode=0755
-
-- name: Installing custom SSHD config
-  copy: src=conf/sshd_config dest=/etc/ssh/sshd_config backup=yes
-
-- name: Restarting sshd to use new configuration
-  command: "/usr/bin/systemctl restart sshd"
-
 # digital ocean fix since they have a bug in newly booted fedora droplets
 - name: Disabling rngd (if present)
   command: "/usr/bin/systemctl disable rngd.service || true"
@@ -42,7 +18,6 @@
     - tcpdump
     - openssl-devel
     - gcc-c++
-    - golang
     - words
     - fish
     - bc
@@ -65,6 +40,74 @@
     - zlib-devel
     - perl-Digest
 
+- name: "Create extra convention dirs"
+  file: "path={{ item }} state=directory"
+  with_items:
+     - /usr/local/rc.d
+     - /srv/rc.d
+     - /srv/bin
+     - /usr/local/gopath/bin
+     - /etc/ghk
+
+- name: Copying bash envcustomizations
+  copy: src=conf/envcustomizations dest=/etc/envcustomizations
+
+- name: Adding envcustomizations sourcing to global profile
+  lineinfile: 
+    dest: /etc/profile
+    line: source /etc/envcustomizations
+    state: present
+
+- name: Checking go version
+  register: go_already_installed_check
+  ignore_errors: True
+  command: "bash -lc 'go version | grep -Gq 1.3.1'"
+
+- name: Downloading go 1.3.1 binary
+  when: go_already_installed_check|failed
+  get_url:
+    url: "https://storage.googleapis.com/golang/go1.3.1.linux-amd64.tar.gz"
+    dest: /usr/local/src/go1.3.1.linux-amd64.tar.gz
+
+- name: Installing Golang 1.3.1
+  when: go_already_installed_check|failed
+  unarchive: src=/usr/local/src/go1.3.1.linux-amd64.tar.gz dest=/usr/local/ copy=no
+
+- name: Installing godep
+  command: bash -lc 'go get github.com/tools/godep'
+
+- name: Downloading gh-keys source
+  command: bash -lc 'go get -d github.com/davidpelaez/gh-keys/gh-keys'
+
+# TODO how to test while also having local configuration?
+- name: Installing gh-keys dependencies
+  command: "bash -lc 'cd $GOPATH/src/github.com/davidpelaez/gh-keys && godep restore && make build && mv binaries/gh-keys /usr/sbin/gh-keys'"
+
+# TODO test the binary
+#- name: Installing github keys binary
+#  shell: #src=bin/gh-keys dest=/usr/sbin/gh-keys mode=0755
+
+- name: Installing custom SSHD config
+  copy: src=conf/sshd_config dest=/etc/ssh/sshd_config backup=yes
+
+- name: Restarting sshd to use new configuration
+  command: "/usr/bin/systemctl restart sshd"
+
+- name: Setting SElinux policy to permissive
+  selinux: policy=targeted state=permissive
+
+- name: Disabling/stopping firewalld
+  service: name=firewalld enabled=no state=stopped
+
+- name: Masking firewalld
+  command: "/usr/bin/systemctl mask firewalld"
+
+- name: Flushing iptables
+  command: "/usr/sbin/iptables -F"
+
+- name: Saving iptables
+  shell: "/usr/sbin/iptables-save > /etc/sysconfig/iptables creates=/etc/sysconfig/iptables"
+
 - name: Defining docker0 static bridge
   copy: src=conf/ifcfg-docker0 dest=/etc/sysconfig/network-scripts/ifcfg-docker0 mode=0755
 
@@ -77,27 +120,11 @@
     dest: /usr/bin/docker
     mode: 0755
 
-- name: "Create extra convention dirs"
-  file: "path={{ item }} state=directory"
-  with_items:
-     - /usr/local/rc.d
-     - /srv/rc.d
-     - /srv/bin
-
-- name: Installing JQ
-  copy: src=vendor/jq dest=/usr/bin/jq mode=0755
-
-- name: Copying bash prompt
-  copy: src=conf/prompt dest=/etc/prompt
-
 - name: Copying dnsmasq configuration
   copy: src=conf/dnsmasq.conf dest=/etc/dnsmasq.conf
 
-- name: Sourcing prompt in bashrc (global)
-  lineinfile: 
-    dest: /etc/bashrc
-    line: source /etc/prompt
-    state: present
+- name: Installing JQ
+  copy: src=vendor/jq dest=/usr/bin/jq mode=0755
 
 - name: Making sure rubypick is absent
   yum: "pkg=rubypick state=absent"

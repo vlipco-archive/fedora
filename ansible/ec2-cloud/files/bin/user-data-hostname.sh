@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-HOSTNAME=$(/usr/local/bin/user-data hostname || true)
+HOSTNAME="$(user-data hostname)"
 
-if [ -z "$HOSTNAME" ]; then
+if [[ -n "$HOSTNAME" ]]; then
   echo Setting hostname to $HOSTNAME
   /bin/hostname $HOSTNAME
   echo "Writing hostname to /etc/hostname"

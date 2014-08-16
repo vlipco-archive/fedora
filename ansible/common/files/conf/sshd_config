@@ -3,7 +3,7 @@ SyslogFacility AUTHPRIV
 AuthorizedKeysCommand /usr/sbin/gh-keys
 AuthorizedKeysCommandUser root
 
-AuthorizedKeysFile /dev/null
+AuthorizedKeysFile /etc/ghk/authorized-keys/%u
 
 PasswordAuthentication no
 
