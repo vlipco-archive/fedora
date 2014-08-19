@@ -2,6 +2,12 @@
 - name: Disabling rngd (if present)
   command: "/usr/bin/systemctl disable rngd.service || true"
 
+- name: Not requiring a TTY for sudo
+  lineinfile:
+    regexp: (Defaults)\s*(requiretty)
+    state: absent
+    dest: /etc/sudoers
+
 - name: Installing basic packages
   yum: "pkg={{item}} state=installed"
   with_items:

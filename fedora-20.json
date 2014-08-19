@@ -49,7 +49,7 @@
     },
     {
       "vm_name": "{{ user `box_name` }}",
-      "headless": true,
+      "headless": false,
       "output_directory": ".tmp/{{ user `box_name` }}",
       "shutdown_command": "sudo systemctl poweroff",
       "source_path": "boxes/chef/fedora-20/box.ovf",

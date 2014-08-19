@@ -25,9 +25,10 @@
 - name: Syncing Vim source
   when: already_installed_check|failed
   git:
-    repo: git://github.com/b4winckler/vim.git
+    repo: https://github.com/b4winckler/vim.git
     dest: /usr/src/vim-src
-    version: v7-4-244 # tag to use
+    version: v7-4-402 # tag to use
+    accept_hostkey: yes
 
 - name: Configuring vim source
   when: already_installed_check|failed
