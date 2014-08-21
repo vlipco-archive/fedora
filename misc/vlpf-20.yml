@@ -1,0 +1,59 @@
+---
+variables:
+  box_name: vlpf-20
+  aws_access_key: "{{env `AWS_ACCESS_KEY`}}"
+  aws_secret_key: "{{env `AWS_SECRET_KEY`}}"
+
+builders:
+
+  - type: amazon-ebs
+    access_key: "{{user `aws_access_key`}}"
+    secret_key: "{{user `aws_secret_key`}}"
+    region: us-east-1
+    source_ami: ami-1337187a
+    instance_type: m1.xlarge
+    ssh_username: fedora
+    ami_name: "{{ user `box_name` }}-{{timestamp}}"
+    ami_block_device_mappings:
+      - device_name: /dev/sda1
+        volume_size: 15
+        delete_on_termination: true
+    launch_block_device_mappings:
+      - device_name: /dev/sda1
+        volume_size: 15
+        delete_on_termination: true
+
+  - type: virtualbox-ovf
+    source_path: boxes/chef/fedora-20/box.ovf
+    vm_name: "{{ user `box_name` }}"
+    ssh_username: vagrant
+    output_directory: ".tmp/{{ user `box_name` }}"
+    headless: True
+    ssh_key_path: misc/vagrant-insecure.pem
+    #ssh_wait_timeout: 1m
+    shutdown_command: sudo systemctl poweroff
+    vboxmanage:
+      - ["modifyvm", "{{.Name}}", "--memory", 4096]
+      - ["modifyvm", "{{.Name}}", "--cpus", 2]
+
+  # DIGITALOCEAN_CLIENT_ID & DIGITALOCEAN_API_KEY env vars required
+  - type: digitalocean
+    droplet_name: "{{ user `box_name` }}-{{timestamp}}"
+    region: nyc2
+    size: 512mb
+    image: fedora-20-x64
+    snapshot_name: "{{ user `box_name` }}-{{timestamp}}"
+
+provisioners:
+  # copy ansible folder for local execution
+  - type: file
+    source: ansible
+    destination: /tmp/ansible
+  # run the playbook locally
+  - type: shell
+    script: misc/provision
+
+post-processors:
+  - type: vagrant
+    compression_level: 9
+    output: "boxes/vlipco/{{ user `box_name` }}.box"
