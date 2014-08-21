@@ -1,0 +1,46 @@
+- name: install ruby dependencies
+  yum: pkg={{item}} state=installed
+  with_items:
+    - bzip2
+    - automake
+    - gdbm-devel
+    - libffi-devel
+    - libyaml-devel
+    - openssl-devel
+    - ncurses-devel
+    - readline-devel
+    - zlib-devel
+    - perl-Digest
+
+- set_fact:
+    rb_version: 2.1.1
+    src_dir: /usr/local/src
+    rb: /usr/local/bin/ruby
+    rbi: ruby-install-0.4.3
+
+- set_fact:
+    rbi_dir: "{{src_dir}}/{{rbi}}"
+
+- name: Ruby install
+  get_url:
+    dest: "{{src_dir}}/{{rbi}}.tar.gz"
+    url: "https://github.com/postmodern/ruby-install/archive/v0.4.3.tar.gz"
+
+- command: "tar xf {{rbi}}.tar.gz chdir={{src_dir}} creates={{rbi_dir}}"
+
+- command: "make install chdir={{rbi_dir}} creates=/usr/local/bin/ruby-install"
+
+- set_fact: 
+    install_cmd: "/usr/local/bin/ruby-install -i /usr/local/ ruby {{rb_version}}"
+
+- name: Install ruby
+  shell: "{{install_cmd}} 2> /dev/null creates={{rb}}"
+
+- name: Install bundler
+  shell: "/usr/local/bin/gem install bundler"
+
+- name: Cleaning temp files
+  shell: "rm -rf {{src_dir}}/{{item}}*"
+  with_items:
+    - "{{rbi}}"
+    - "ruby-{{rb_version}}"

@@ -19,6 +19,7 @@
     - wget
     - bridge-utils
     - curl
+    - iptables-services
     - nc
     - unzip
     - tcpdump
@@ -54,6 +55,7 @@
      - /srv/bin
      - /usr/local/gopath/bin
      - /etc/ghk
+     - /etc/ferm
 
 - name: Copying bash envcustomizations
   copy: src=conf/envcustomizations dest=/etc/envcustomizations
@@ -113,6 +115,9 @@
 
 - name: Saving iptables
   shell: "/usr/sbin/iptables-save > /etc/sysconfig/iptables creates=/etc/sysconfig/iptables"
+
+- name: Enabling iptables
+  service: name=iptables enabled=yes state=started
 
 - name: Defining docker0 static bridge
   copy: src=conf/ifcfg-docker0 dest=/etc/sysconfig/network-scripts/ifcfg-docker0 mode=0755
@@ -194,6 +199,9 @@
 
 - name: Pulling vlipco/mini into docker
   command: /usr/bin/docker pull vlipco/mini
+
+- name: Installing ferm-apply script
+  copy: src=bin/ferm-apply.sh dest=/usr/sbin/ferm-apply mode=0755
 
 - name: Creating auto-hostname script in local rc.d
   copy: src=bin/auto-hostname.sh dest=/usr/local/rc.d/auto-hostname mode=0755
