@@ -4,7 +4,7 @@ JSON_TEMPLATE = vlpf-20.json
 virtualbox_clean:
 	@echo
 	@echo "---- clean ----"
-	@vagrant box remove vlipco/$(TARGET_NAME) || echo 'Ignoring...'
+	@vagrant box remove $(TARGET_NAME) || echo 'Ignoring...'
 
 virtualbox_build:
 	@echo
