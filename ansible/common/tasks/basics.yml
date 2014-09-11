@@ -160,7 +160,6 @@
 - name: Copying systemd units
   copy: "src=system/{{item}} dest=/etc/systemd/system/{{item}}"
   with_items:
-    - docker.service
     - rc-local.service
     - server.target
     - sshd-shutdown.service
@@ -173,7 +172,6 @@
   #command: "/usr/bin/systemctl enable /etc/systemd/system/{{item}}"
   service: "name={{ item }} enabled=yes"
   with_items:
-    - docker.service
     - server.target
     - rc-local.service
     - dnsmasq.service
@@ -182,11 +180,7 @@
 - name: Restarting units
   command: "/usr/bin/systemctl restart {{item}}"
   with_items:
-    - docker.service
     - server.target
-
-- name: Pulling vlipco/mini into docker
-  command: /usr/bin/docker pull vlipco/mini
 
 - name: Installing ferm-apply script
   copy: src=bin/ferm-apply.sh dest=/usr/sbin/ferm-apply mode=0755

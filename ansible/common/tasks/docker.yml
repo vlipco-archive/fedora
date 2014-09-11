@@ -9,3 +9,15 @@
     url: "https://get.docker.io/builds/Linux/x86_64/docker-latest"
     dest: /usr/bin/docker
     mode: 0755
+
+- name: Copying systemd units
+  copy: "src=system/docker.service dest=/etc/systemd/system/docker.service"
+
+- name: Enabling units
+  service: "name=docker.service enabled=yes"
+
+- name: Restarting units
+  command: "/usr/bin/systemctl restart docker.service"
+
+- name: Pulling vlipco/mini into docker
+  command: /usr/bin/docker pull vlipco/mini
