@@ -1,0 +1,15 @@
+[Unit]
+Description=Consul Server
+Requires=cluster.target
+
+[Service]
+
+Restart=always
+TimeoutStopSec=15
+RestartSec=5
+
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/consul agent -config-dir /srv/cluster/consul
+
+[Install]
+WantedBy=cluster.target

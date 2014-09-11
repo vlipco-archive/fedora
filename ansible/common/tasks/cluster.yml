@@ -1,0 +1,8 @@
+- name: Copying cluster.target systemd unit
+  copy: "src=system/cluster.target dest=/etc/systemd/system/cluster.target"
+
+- name: Enabling cluster.target unit
+  service: "name=cluster.target enabled=yes"
+
+- name: Restarting cluster.target unit
+  command: "/usr/bin/systemctl restart cluster.target"

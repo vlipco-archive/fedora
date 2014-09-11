@@ -1,0 +1,6 @@
+[Unit]
+Description=Cluster Services
+After=docker.service
+
+[Install]
+WantedBy=server.target
