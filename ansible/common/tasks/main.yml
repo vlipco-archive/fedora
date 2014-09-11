@@ -1,5 +1,6 @@
 ---
 - include: basics.yml tags=basics
+- include: cluster.yml tags=cluster
 - include: consul.yml tags=consul
 - include: docker.yml tags=docker
 - include: ruby.yml tags=ruby

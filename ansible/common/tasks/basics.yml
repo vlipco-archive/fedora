@@ -53,6 +53,7 @@
      - /usr/local/rc.d
      - /srv/rc.d
      - /srv/bin
+     - /srv/consul
      - /usr/local/gopath/bin
      - /etc/ghk
      - /etc/ferm
