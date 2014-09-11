@@ -2,6 +2,7 @@
 
 - hosts: all
   sudo: yes
+  gather_facts: False
   vars:
     is_ec2: False
   roles:

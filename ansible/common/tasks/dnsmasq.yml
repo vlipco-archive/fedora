@@ -1,0 +1,17 @@
+- name: Installing dnsmasq package
+  yum: "pkg=dnsmasq state=installed"
+
+- name: Copying dnsmasq configuration
+  copy: src=conf/dnsmasq.conf dest=/etc/dnsmasq.conf
+
+- name: Copying systemd units
+  copy: "src=system/dnsmasq.service dest=/etc/systemd/system/dnsmasq.service"
+
+- name: Updating systemd daemon
+  command: "/usr/bin/systemctl daemon-reload"
+
+- name: Enabling dnsmasq.service unit
+  service: "name=dnsmasq.service enabled=yes"
+
+- name: Restarting dnsmasq.service unit
+  service: "name=dnsmasq.service state=restarted"

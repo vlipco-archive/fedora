@@ -9,7 +9,7 @@ Environment="BKP=/etc/resolv.conf.orig" "TGT=/etc/resolv.conf"
 
 ExecStartPre=/bin/bash -c "test -e $BKP || cp $TGT $BKP"
 
-ExecStart=/usr/sbin/dnsmasq -k -C /etc/dnsmasq.conf
+ExecStart=/usr/sbin/dnsmasq -k -R -C /etc/dnsmasq.conf
 
 ExecStartPost=/bin/bash -c "echo 'nameserver 172.17.42.1' > $TGT"
 

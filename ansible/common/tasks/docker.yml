@@ -16,8 +16,8 @@
 - name: Enabling units
   service: "name=docker.service enabled=yes"
 
+- name: Updating systemd daemon
+  command: "/usr/bin/systemctl daemon-reload"
+
 - name: Restarting units
   command: "/usr/bin/systemctl restart docker.service"
-
-- name: Pulling vlipco/mini into docker
-  command: /usr/bin/docker pull vlipco/mini

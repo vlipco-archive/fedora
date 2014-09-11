@@ -15,7 +15,6 @@
     - make
     - git
     - mercurial
-    - dnsmasq
     - wget
     - bridge-utils
     - curl
@@ -120,8 +119,7 @@
 - name: Enabling iptables
   service: name=iptables enabled=yes state=started
 
-- name: Copying dnsmasq configuration
-  copy: src=conf/dnsmasq.conf dest=/etc/dnsmasq.conf
+
 
 - name: Installing JQ
   copy: src=vendor/jq dest=/usr/bin/jq mode=0755
@@ -164,7 +162,6 @@
     - rc-local.service
     - server.target
     - sshd-shutdown.service
-    - dnsmasq.service
 
 - name: Updating systemd daemon
   command: "/usr/bin/systemctl daemon-reload"
@@ -175,7 +172,6 @@
   with_items:
     - server.target
     - rc-local.service
-    - dnsmasq.service
     - sshd-shutdown.service 
 
 - name: Restarting units

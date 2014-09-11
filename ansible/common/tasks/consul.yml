@@ -12,7 +12,8 @@
 
 - name: Unarchiving consul
   when: consul_installed | failed
-  command: unzip -o /tmp/0.4.0_linux_amd64.zip #uses -0 to overwrite and avoid queries
+  #uses -0 to overwrite and avoid queries
+  command: unzip -o /tmp/0.4.0_linux_amd64.zip chdir=/tmp
 
 - name: Installing Consul
   when: consul_installed | failed
@@ -23,6 +24,9 @@
 
 - name: Enabling units
   service: "name=consul.service enabled=yes"
+
+- name: Updating systemd daemon
+  command: "/usr/bin/systemctl daemon-reload"
 
 - name: Restarting units
   command: "/usr/bin/systemctl restart consul.service"

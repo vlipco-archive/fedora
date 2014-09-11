@@ -1,5 +1,6 @@
 ---
 - include: basics.yml tags=basics
+- include: dnsmasq.yml tags=dnsmasq
 - include: cluster.yml tags=cluster
 - include: consul.yml tags=consul
 - include: docker.yml tags=docker

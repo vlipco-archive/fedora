@@ -9,7 +9,7 @@ TimeoutStopSec=15
 RestartSec=5
 
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStart=/usr/bin/consul agent -config-dir /srv/cluster/consul
+ExecStart=/usr/bin/consul agent -config-dir /srv/consul
 
 [Install]
 WantedBy=cluster.target
