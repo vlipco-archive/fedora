@@ -1,4 +1,6 @@
 ---
 - include: basics.yml tags=basics
+- include: consul.yml tags=consul
+- include: docker.yml tags=docker
 - include: ruby.yml tags=ruby
 - include: vim.yml tags=vim

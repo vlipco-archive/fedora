@@ -119,18 +119,6 @@
 - name: Enabling iptables
   service: name=iptables enabled=yes state=started
 
-- name: Defining docker0 static bridge
-  copy: src=conf/ifcfg-docker0 dest=/etc/sysconfig/network-scripts/ifcfg-docker0 mode=0755
-
-- name: Bringing up docker0
-  command: /usr/sbin/ifup docker0
-
-- name: Installing latest docker from binary
-  get_url:
-    url: "https://get.docker.io/builds/Linux/x86_64/docker-latest"
-    dest: /usr/bin/docker
-    mode: 0755
-
 - name: Copying dnsmasq configuration
   copy: src=conf/dnsmasq.conf dest=/etc/dnsmasq.conf
 

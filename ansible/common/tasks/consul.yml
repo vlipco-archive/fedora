@@ -1,0 +1,13 @@
+- name: Downloading Consul 0.4
+  get_url:
+    url: "https://dl.bintray.com/mitchellh/consul/0.4.0_linux_amd64.zip"
+    dest: /tmp/0.4.0_linux_amd64.zip
+    sha256sum: 4f8cd1cc5d90be9e1326fee03d3c96289a4f8b9b6ccb062d228125a1adc9ea0c
+
+- name: Unarchiving consul
+  command: unzip /tmp/0.4.0_linux_amd64.zip
+
+- name: Installing Consul
+  command: mv /tmp/consul /usr/bin/consul
+
+
