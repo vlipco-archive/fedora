@@ -1,0 +1,16 @@
+[Unit]
+Description=Consul Registrator
+Requires=cluster.target
+Requires=consul.service
+
+[Service]
+
+Restart=always
+RestartSec=5
+ExecStartPre=-/usr/bin/docker rm -f registrator
+ExecStart=/usr/bin/docker run --net host -it --rm --name registrator \
+	-v /var/run/docker.sock:/tmp/docker.sock progrium/registrator \
+	consul://127.0.0.1:8500
+
+[Install]
+WantedBy=cluster.target

@@ -19,5 +19,5 @@
 - name: Updating systemd daemon
   command: "/usr/bin/systemctl daemon-reload"
 
-- name: Restarting units
-  command: "/usr/bin/systemctl restart docker.service"
+- name: Restarting docker.service unit
+  service: "name=docker.service state=restarted"

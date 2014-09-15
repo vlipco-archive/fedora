@@ -20,15 +20,18 @@
   command: mv /tmp/consul /usr/bin/consul
 
 - name: Copying systemd units
-  copy: "src=system/consul.service dest=/etc/systemd/system/consul.service"
+  copy: "src=system/{{item}} dest=/etc/systemd/system/{{item}}"
+  with_items: ["consul.service", "registrator.service"]
 
 - name: Enabling units
-  service: "name=consul.service enabled=yes"
+  service: "name={{item}} enabled=yes"
+  with_items: ["consul.service", "registrator.service"]
 
 - name: Updating systemd daemon
   command: "/usr/bin/systemctl daemon-reload"
 
-- name: Restarting units
-  command: "/usr/bin/systemctl restart consul.service"
+- name: Starting units (manual restart needed if desired)
+  command: "/usr/bin/systemctl start {{item}}"
+  with_items: ["consul.service", "registrator.service"]
 
 
