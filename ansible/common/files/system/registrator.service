@@ -2,6 +2,7 @@
 Description=Consul Registrator
 Requires=cluster.target
 Requires=consul.service
+Requires=docker.service
 
 [Service]
 
