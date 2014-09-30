@@ -1,0 +1,16 @@
+- set_fact: "target_user={{ nvm_user | default('fedora') }}"
+
+- name: Install nvm
+  sudo: yes
+  sudo_user: "{{target_user}}"
+  shell: "curl https://raw.githubusercontent.com/creationix/nvm/v0.17.2/install.sh | bash creates=~{{target_user}}/.nvm"
+
+- name: Install node 0.10
+  sudo: yes
+  sudo_user: "{{target_user}}"
+  command: "bash -l -c 'nvm install 0.10'"
+
+- name: Make 0.10 default
+  sudo: yes
+  sudo_user: "{{target_user}}"
+  command: "bash -l -c 'nvm alias default 0.10'"
