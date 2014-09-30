@@ -148,12 +148,6 @@
 - name: Installg profile.d path-additions
   copy: src=bin/path-additions.sh dest=/etc/profile.d/path-additions.sh mode=0755
 
-- name: Finding local user to be managed
-  filter: 
-    items: "{{managed_users}}"
-    test: "id __item__ &> /dev/null"
-    fact: target_users
-
 - name: Creating rc.local script
   copy: src=bin/rc-local.sh dest=/usr/bin/rc-local mode=0755
 

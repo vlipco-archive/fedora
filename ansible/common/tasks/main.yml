@@ -5,4 +5,5 @@
 - include: consul.yml tags=consul
 - include: docker.yml tags=docker
 - include: ruby.yml tags=ruby
+- include: node.yml tags=node
 - include: vim.yml tags=vim
