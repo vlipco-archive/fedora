@@ -1,4 +1,4 @@
-- name: install ruby dependencies
+- name: install ruby & gem dependencies
   yum: pkg={{item}} state=installed
   with_items:
     - bzip2
@@ -11,9 +11,13 @@
     - readline-devel
     - zlib-devel
     - perl-Digest
+    - libxml2
+    - libxml2-devel
+    - libxslt
+    - libxslt-devel
 
 - set_fact:
-    rb_version: 2.1.1
+    rb_version: 2.1
     src_dir: /usr/local/src
     rb: /usr/local/bin/ruby
     rbi: ruby-install-0.4.3
@@ -36,8 +40,13 @@
 - name: Install ruby
   shell: "{{install_cmd}} 2> /dev/null creates={{rb}}"
 
-- name: Install bundler
-  shell: "/usr/local/bin/gem install bundler"
+- name: Install basic gems
+  shell: "/usr/local/bin/gem install {{item}}"
+  with_items:
+    - bundler
+    - dotenv
+    - nokogiri
+    - foreman
 
 - name: Cleaning temp files
   shell: "rm -rf {{src_dir}}/{{item}}*"
